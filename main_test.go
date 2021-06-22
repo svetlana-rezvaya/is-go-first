@@ -48,4 +48,8 @@ func TestIsGoFirst(test *testing.T) {
 		test.Log("repos not found")
 		test.FailNow()
 	}
+	if responseData.Items[0].FullName != "golang/go" {
+		test.Log("Go is not first")
+		test.FailNow()
+	}
 }
