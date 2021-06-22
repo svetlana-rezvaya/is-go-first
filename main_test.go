@@ -14,5 +14,12 @@ func TestIsGoFirst(test *testing.T) {
 		test.FailNow()
 	}
 
-	request = request
+	client := http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		test.Logf("unable to send the request: %s", err)
+		test.FailNow()
+	}
+
+	response = response
 }
