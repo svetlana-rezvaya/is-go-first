@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -29,5 +30,17 @@ func TestIsGoFirst(test *testing.T) {
 		test.FailNow()
 	}
 
-	responseBytes = responseBytes
+	type repo struct {
+		FullName string `json:"full_name"`
+	}
+	type repoPage struct {
+		Items []repo
+	}
+
+	responseData := repoPage{}
+	err = json.Unmarshal(responseBytes, &responseData)
+	if err != nil {
+		test.Logf("unable to unmarshal the response: %s", err)
+		test.FailNow()
+	}
 }
