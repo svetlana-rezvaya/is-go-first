@@ -43,4 +43,9 @@ func TestIsGoFirst(test *testing.T) {
 		test.Logf("unable to unmarshal the response: %s", err)
 		test.FailNow()
 	}
+
+	if len(responseData.Items) == 0 {
+		test.Log("repos not found")
+		test.FailNow()
+	}
 }
