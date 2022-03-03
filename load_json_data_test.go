@@ -12,6 +12,7 @@ func Test_loadJSONData(test *testing.T) {
 	type args struct {
 		httpClient   *http.Client
 		url          string
+		authHeader   string
 		responseData interface{}
 	}
 	type data struct {
@@ -28,13 +29,35 @@ func Test_loadJSONData(test *testing.T) {
 
 	tests := []data{
 		data{
-			name: "success",
+			name: "success without authorization",
 			testServerHandler: func(writer http.ResponseWriter, request *http.Request) {
 				writer.Write([]byte(`{"FieldOne": 23, "FieldTwo": "test"}`))
 			},
 			args: args{
 				httpClient:   &http.Client{},
 				url:          "http://example.com/",
+				authHeader:   "",
+				responseData: &testPayload{},
+			},
+			wantedResponseData: &testPayload{FieldOne: 23, FieldTwo: "test"},
+			wantedErrStr:       "",
+		},
+		data{
+			name: "success with authorization",
+			testServerHandler: func(writer http.ResponseWriter, request *http.Request) {
+				if request.Header.Get("Authorization") != "test-token" {
+					const errStatus = http.StatusUnauthorized
+					http.Error(writer, http.StatusText(errStatus), errStatus)
+
+					return
+				}
+
+				writer.Write([]byte(`{"FieldOne": 23, "FieldTwo": "test"}`))
+			},
+			args: args{
+				httpClient:   &http.Client{},
+				url:          "http://example.com/",
+				authHeader:   "test-token",
 				responseData: &testPayload{},
 			},
 			wantedResponseData: &testPayload{FieldOne: 23, FieldTwo: "test"},
@@ -47,6 +70,7 @@ func Test_loadJSONData(test *testing.T) {
 			args: args{
 				httpClient:   &http.Client{},
 				url:          ":",
+				authHeader:   "",
 				responseData: &testPayload{},
 			},
 			wantedResponseData: &testPayload{},
@@ -61,6 +85,7 @@ func Test_loadJSONData(test *testing.T) {
 			args: args{
 				httpClient:   &http.Client{},
 				url:          "http://example.com/",
+				authHeader:   "",
 				responseData: &testPayload{},
 			},
 			wantedResponseData: &testPayload{},
@@ -75,6 +100,7 @@ func Test_loadJSONData(test *testing.T) {
 			args: args{
 				httpClient:   &http.Client{},
 				url:          "http://example.com/",
+				authHeader:   "",
 				responseData: &testPayload{},
 			},
 			wantedResponseData: &testPayload{},
@@ -89,6 +115,7 @@ func Test_loadJSONData(test *testing.T) {
 			args: args{
 				httpClient:   &http.Client{},
 				url:          "http://example.com/",
+				authHeader:   "",
 				responseData: &testPayload{},
 			},
 			wantedResponseData: &testPayload{},
@@ -102,6 +129,7 @@ func Test_loadJSONData(test *testing.T) {
 			args: args{
 				httpClient:   &http.Client{},
 				url:          "http://example.com/",
+				authHeader:   "",
 				responseData: &testPayload{},
 			},
 			wantedResponseData: &testPayload{},
@@ -118,7 +146,12 @@ func Test_loadJSONData(test *testing.T) {
 			"http://example.com",
 			testServer.URL,
 		)
-		err := loadJSONData(testData.args.httpClient, url, testData.args.responseData)
+		err := loadJSONData(
+			testData.args.httpClient,
+			url,
+			testData.args.authHeader,
+			testData.args.responseData,
+		)
 
 		if !reflect.DeepEqual(
 			testData.args.responseData,

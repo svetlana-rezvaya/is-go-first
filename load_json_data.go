@@ -10,11 +10,16 @@ import (
 func loadJSONData(
 	httpClient *http.Client,
 	url string,
+	authHeader string,
 	responseData interface{},
 ) error {
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return fmt.Errorf("unable to create the request: %w", err)
+	}
+
+	if authHeader != "" {
+		request.Header.Set("Authorization", authHeader)
 	}
 
 	response, err := httpClient.Do(request)

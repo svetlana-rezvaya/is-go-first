@@ -18,7 +18,7 @@ func TestIsGoFirst(test *testing.T) {
 	page := repoPage{}
 	const url = "https://api.github.com/search/repositories" +
 		"?q=programming+language&sort=stars"
-	if err := loadJSONData(&http.Client{}, url, &page); err != nil {
+	if err := loadJSONData(&http.Client{}, url, "", &page); err != nil {
 		test.Logf("unable to load the data: %s", err)
 		test.FailNow()
 	}
