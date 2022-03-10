@@ -12,6 +12,20 @@ The playful project for checking that Go is at the top of GitHub.
 $ go test -race -cover -tags integration
 ```
 
+### GitHub Authentication
+
+It supports GitHub Basic Authentication via a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+
+To enable that, set the following environment variables:
+
+- `GITHUB_USERNAME` &mdash; GitHub username;
+- `GITHUB_TOKEN` &mdash; GitHub [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+
+```
+$ GITHUB_USERNAME=username GITHUB_TOKEN=token \
+  go test -race -cover -tags integration
+```
+
 ## License
 
 The MIT License (MIT)
