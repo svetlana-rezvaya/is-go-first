@@ -1,4 +1,4 @@
-package main
+package isgofirst
 
 import (
 	"net/http"
